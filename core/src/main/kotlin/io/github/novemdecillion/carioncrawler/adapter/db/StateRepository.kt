@@ -18,6 +18,7 @@ class StateRepository(val dsl: DSLContext) {
       .set(STATE.KEY, SEARCHED_DATE)
       .set(STATE.VALUE, value)
       .onConflict(STATE.KEY).doUpdate().set(STATE.VALUE, value)
+      .execute()
   }
 
   fun getSearchedDate(dateIfNull: LocalDate): LocalDate {
