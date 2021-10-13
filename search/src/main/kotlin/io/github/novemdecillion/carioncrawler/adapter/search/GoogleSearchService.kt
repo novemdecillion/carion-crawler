@@ -5,6 +5,7 @@ import com.codeborne.selenide.Configuration
 import com.codeborne.selenide.Selenide
 import io.github.novemdecillion.carioncrawler.adapter.db.SearchedPageRepository
 import io.github.novemdecillion.carioncrawler.adapter.db.StateRepository
+import org.openqa.selenium.NoSuchElementException
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
@@ -14,6 +15,8 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.random.Random
 
 @Service
 class GoogleSearchService(val searchProperties: GoogleSearchProperties, val searchedRepository: SearchedPageRepository,
@@ -29,10 +32,16 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
     try {
       Configuration.headless = true
       Configuration.startMaximized = true
+      Configuration.timeout = 10_000
 
       val searchStartDate = stateRepository
         .getSearchedDate(searchProperties.startAt.minusDays(1))
         .plusDays(1)
+
+      // 開始日が今なら、もう検索済み
+      if (searchStartDate == LocalDate.now()) {
+        return
+      }
 
       searchProperties.keywords
         .forEach {
@@ -49,10 +58,16 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
     val encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8)
     val encodedPeriod = URLEncoder.encode("cdr:1,cd_min:${searchStartDate.format(DATE_PATTERN)},cd_max:", StandardCharsets.UTF_8)
 
-    Selenide.open("https://www.google.com/search?q=${encodedKeyword}&tbs=${encodedPeriod}")
+    Selenide.open("https://www.google.com/search?q=${encodedKeyword}&tbs=${encodedPeriod}&;filter=0")
     while (true) {
-      enumerateLink()
+      if (!enumerateLink()) {
+        break
+      }
 
+      // ロボット判定回避のため5〜10秒スリープ
+      Thread.sleep(Random(Date().time).nextLong(5_000, 10_000))
+
+      // 次ページ操作
       val pNext = Selenide.`$`("#pnnext")
       if (!pNext.`is`(Condition.exist)) {
         break
@@ -62,8 +77,24 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
     Selenide.closeWebDriver()
   }
 
-  fun enumerateLink() {
-    Selenide.`$`("#search").should(Condition.appear)
+  fun enumerateLink(): Boolean {
+    try {
+      Selenide.`$`("#search").should(Condition.appear)
+    } catch (ex: NoSuchElementException) {
+      if (Selenide.`$`("#captcha-form").`is`(Condition.exist)) {
+        /*
+          おそらく
+          Our systems have detected unusual traffic from your computer network.
+          This page checks to see if it's really you sending the requests, and not a robot.
+          が表示された。
+        */
+        log.info("ロボット判定が表示された。", ex)
+      } else {
+        log.error("検索結果の取得に失敗。", ex)
+      }
+      return false
+    }
+
     Selenide.`$$`("#search a[href]")
       .mapNotNull { link ->
         link.attr("href")
@@ -74,5 +105,6 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
       .forEach {
         searchedRepository.insert(it)
       }
+    return true
   }
 }
