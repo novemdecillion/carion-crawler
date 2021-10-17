@@ -145,14 +145,26 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
       .mapNotNull {
         it.attr("href")
       }
+      .mapNotNull {
+        try {
+          URI(it)
+        } catch (ex: Exception) {
+          log.error("URL解析エラー", ex)
+          null
+        }
+      }
+      .map {
+        // フラグメント削除
+        URI(it.scheme, it.schemeSpecificPart, null)
+      }
       .filter {
-        when(URI(it).scheme?.lowercase()) {
-          null, "http", "https" -> true
+        when(it.scheme?.lowercase()) {
+          "http", "https" -> true
           else -> false
         }
       }
       .forEach {
-        crawl(it, searchedAt, url,level + 1)
+        crawl(it.toString(), searchedAt, url,level + 1)
       }
   }
 }
