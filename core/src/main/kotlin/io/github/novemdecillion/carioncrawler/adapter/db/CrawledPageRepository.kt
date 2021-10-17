@@ -13,10 +13,12 @@ import java.time.OffsetDateTime
 
 @Repository
 class CrawledPageRepository(val dsl: DSLContext) {
-  fun insertOrUpdate(url: String, status: CrawledStatus, searchedAt: OffsetDateTime, note: String? = null) {
-    val record = CrawledPageRecord(url = url, status = status, note = note, searchedAt = searchedAt, crawledAt = OffsetDateTime.now())
-    record.reset(CRAWLED_PAGE.EXCLUDE)
-    dsl.insertInto(CRAWLED_PAGE).set(record)
+  fun insertOrUpdate(entity: CrawledPageEntity): Int {
+    val record = entity.into(CrawledPageRecord())
+    if (entity.exclude == null) {
+      record.reset(CRAWLED_PAGE.EXCLUDE)
+    }
+    return dsl.insertInto(CRAWLED_PAGE).set(record)
       .onConflict(CRAWLED_PAGE.URL)
       .doUpdate()
       .set(record)

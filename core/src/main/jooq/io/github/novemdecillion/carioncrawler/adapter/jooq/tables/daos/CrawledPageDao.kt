@@ -94,4 +94,24 @@ open class CrawledPageDao(configuration: Configuration?) : DAOImpl<CrawledPageRe
      * Fetch records that have <code>crawled_at IN (values)</code>
      */
     fun fetchByCrawledAtTable(vararg values: OffsetDateTime): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.CRAWLED_AT, *values)
+
+    /**
+     * Fetch records that have <code>html BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    fun fetchRangeOfHtmlTable(lowerInclusive: String?, upperInclusive: String?): List<CrawledPageEntity> = fetchRange(CrawledPageTable.CRAWLED_PAGE.HTML, lowerInclusive, upperInclusive)
+
+    /**
+     * Fetch records that have <code>html IN (values)</code>
+     */
+    fun fetchByHtmlTable(vararg values: String): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.HTML, *values)
+
+    /**
+     * Fetch records that have <code>data BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    fun fetchRangeOfDataTable(lowerInclusive: ByteArray?, upperInclusive: ByteArray?): List<CrawledPageEntity> = fetchRange(CrawledPageTable.CRAWLED_PAGE.DATA, lowerInclusive, upperInclusive)
+
+    /**
+     * Fetch records that have <code>data IN (values)</code>
+     */
+    fun fetchByDataTable(vararg values: ByteArray): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.DATA, *values)
 }

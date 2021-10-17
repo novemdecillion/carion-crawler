@@ -19,5 +19,11 @@ class URLTest {
     Assertions.assertThat(URI("/path/to").scheme).isNull()
     Assertions.assertThat(URI("http://host/path/to").scheme).isEqualTo("http")
 
+    Assertions.assertThat(URI("http://host/path/to#aaa").fragment).isEqualTo("aaa")
+
+    Assertions.assertThat(URI("http://host/path/to#aaa")
+      .let {
+        URI(it.scheme, it.schemeSpecificPart, null).toString()
+      }).isEqualTo("http://host/path/to")
   }
 }

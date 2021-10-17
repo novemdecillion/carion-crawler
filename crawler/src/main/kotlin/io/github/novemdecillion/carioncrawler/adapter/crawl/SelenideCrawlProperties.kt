@@ -7,5 +7,6 @@ import java.time.LocalDate
 @ConfigurationProperties(prefix = "app.selenide-crawl")
 @ConstructorBinding
 data class SelenideCrawlProperties (
-  val storeFolder: String
+  val storeFolder: String,
+  val maxDepth: Int
 )

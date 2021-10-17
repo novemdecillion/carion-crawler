@@ -5,5 +5,6 @@ enum class CrawledStatus {
   ERROR,
   DOWNLOAD,
   NO_KEYWORD,
-  DIFFERENT_HOST
+  DIFFERENT_HOST,
+  EXCEED_DEPTH
 }

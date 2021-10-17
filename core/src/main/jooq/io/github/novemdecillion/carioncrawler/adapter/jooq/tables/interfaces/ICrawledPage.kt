@@ -21,6 +21,8 @@ interface ICrawledPage : Serializable {
     var exclude: Boolean?
     var searchedAt: OffsetDateTime?
     var crawledAt: OffsetDateTime?
+    var html: String?
+    var `data`: ByteArray?
 
     // -------------------------------------------------------------------------
     // FROM and INTO

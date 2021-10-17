@@ -6,7 +6,9 @@ import com.codeborne.selenide.WebDriverRunner
 import io.github.novemdecillion.carioncrawler.adapter.db.CrawledPageRepository
 import io.github.novemdecillion.carioncrawler.adapter.db.CrawledStatus
 import io.github.novemdecillion.carioncrawler.adapter.db.SearchKeywordRepository
+import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.pojos.CrawledPageEntity
 import org.apache.commons.lang3.StringUtils
+import org.openqa.selenium.OutputType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
@@ -36,7 +38,6 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
   fun crawl() {
     Configuration.headless = true
     Configuration.startMaximized = true
-    Configuration.downloadsFolder = crawlProperties.storeFolder
 
     transactionTemplate
       .execute {
@@ -49,7 +50,7 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
       ?.forEach {
         try {
           val folder = URLEncoder.encode(it.url!!, StandardCharsets.UTF_8)
-          Configuration.reportsFolder = "${crawlProperties.storeFolder}/$folder"
+          Configuration.downloadsFolder = "${crawlProperties.storeFolder}/$folder"
 
           visited.clear()
           crawl(it.url!!, it.createAt!!)
@@ -62,12 +63,22 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
   }
 
   fun crawl(url: String, searchedAt: OffsetDateTime, prevUrl: String? = null, level: Int = 0) {
-    // 訪問済み?
-    if (visited.contains(url)) {
+    val crawledPageEntity = CrawledPageEntity(url = url, searchedAt = searchedAt)
+
+    // 再起呼出オーバー
+    if (crawlProperties.maxDepth < level) {
+      transactionTemplate
+        .execute {
+          crawledRepository.selectByUrl(url)
+            ?: run {
+              crawledPageEntity.status = CrawledStatus.EXCEED_DEPTH
+              crawledRepository.insertOrUpdate(crawledPageEntity)
+            }
+        }
       return
     }
-    visited.add(url)
 
+    // 別ホストへのリンク?
     val uri = URI(url)
     if ((uri.host != null)
       && (prevUrl != null)
@@ -75,48 +86,59 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
     ) {
       transactionTemplate
         .execute {
-          crawledRepository.insertOrUpdate(url, CrawledStatus.DIFFERENT_HOST, searchedAt)
+          crawledPageEntity.status = CrawledStatus.DIFFERENT_HOST
+          crawledRepository.insertOrUpdate(crawledPageEntity)
         }
       return
     }
 
+    // 訪問済み?
+    if (visited.contains(url)) {
+      return
+    }
+    visited.add(url)
+
+    // アクセス
     try {
       Selenide.open(url)
     } catch (ex: Exception) {
       log.error("${url}へのアクセスでエラーが発生しました。", ex)
       transactionTemplate
         .execute {
-          crawledRepository.insertOrUpdate(url, CrawledStatus.ERROR, searchedAt, ex.localizedMessage)
+          crawledPageEntity.status = CrawledStatus.ERROR
+          crawledRepository.insertOrUpdate(crawledPageEntity)
         }
       return
     }
-
-    val currentUrl = WebDriverRunner.getWebDriver().currentUrl
 
     // URLが変わらないので、おそらくダウンロードが行われた。
-    if (prevUrl == currentUrl) {
+    if (prevUrl == url) {
       transactionTemplate
         .execute {
-          crawledRepository.insertOrUpdate(currentUrl, CrawledStatus.DOWNLOAD, searchedAt)
+          crawledPageEntity.status = CrawledStatus.DOWNLOAD
+          crawledRepository.insertOrUpdate(crawledPageEntity)
         }
       return
     }
+
+    crawledPageEntity.html = WebDriverRunner.source()
+    crawledPageEntity.data = Selenide.screenshot(OutputType.BYTES)
 
     // ページにキーワードが存在しない
-    val allText = Selenide.element("body").text()
-    if(!keywords.any { allText.contains(it) } ) {
+    if(keywords.any { crawledPageEntity.html?.contains(it) != true }) {
       transactionTemplate
         .execute {
-          crawledRepository.insertOrUpdate(currentUrl, CrawledStatus.NO_KEYWORD, searchedAt)
+          crawledPageEntity.status = CrawledStatus.NO_KEYWORD
+          crawledRepository.insertOrUpdate(crawledPageEntity)
         }
       return
     }
 
-    val file = URLEncoder.encode(currentUrl, StandardCharsets.UTF_8)
-    Selenide.screenshot(file)
     transactionTemplate
       .execute {
-        crawledRepository.insertOrUpdate(currentUrl, CrawledStatus.SUCCESS, searchedAt)
+        crawledPageEntity.status = CrawledStatus.SUCCESS
+        crawledRepository.insertOrUpdate(crawledPageEntity)
+
       }
 
     Selenide.`$$`("a[href]")
@@ -130,7 +152,7 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
         }
       }
       .forEach {
-        crawl(it, searchedAt, currentUrl,level + 1)
+        crawl(it, searchedAt, url,level + 1)
       }
   }
 }

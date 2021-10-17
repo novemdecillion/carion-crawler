@@ -20,7 +20,9 @@ data class CrawledPageEntity(
     override var note: String? = null, 
     override var exclude: Boolean? = null, 
     override var searchedAt: OffsetDateTime? = null, 
-    override var crawledAt: OffsetDateTime? = null
+    override var crawledAt: OffsetDateTime? = null, 
+    override var html: String? = null, 
+    override var `data`: ByteArray? = null
 ): ICrawledPage {
 
 
@@ -33,6 +35,8 @@ data class CrawledPageEntity(
         sb.append(", ").append(exclude)
         sb.append(", ").append(searchedAt)
         sb.append(", ").append(crawledAt)
+        sb.append(", ").append(html)
+        sb.append(", ").append("[binary...]")
 
         sb.append(")")
         return sb.toString()
@@ -49,6 +53,8 @@ data class CrawledPageEntity(
         exclude = from.exclude
         searchedAt = from.searchedAt
         crawledAt = from.crawledAt
+        html = from.html
+        `data` = from.`data`
     }
 
     override fun <E : ICrawledPage> into(into: E): E {

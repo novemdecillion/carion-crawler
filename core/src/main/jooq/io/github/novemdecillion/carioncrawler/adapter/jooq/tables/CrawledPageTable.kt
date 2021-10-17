@@ -17,7 +17,7 @@ import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.Name
 import org.jooq.Record
-import org.jooq.Row6
+import org.jooq.Row8
 import org.jooq.Schema
 import org.jooq.Table
 import org.jooq.TableField
@@ -93,6 +93,16 @@ open class CrawledPageTable(
      */
     val CRAWLED_AT: TableField<CrawledPageRecord, OffsetDateTime?> = createField(DSL.name("crawled_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "")
 
+    /**
+     * The column <code>crawled_page.html</code>.
+     */
+    val HTML: TableField<CrawledPageRecord, String?> = createField(DSL.name("html"), SQLDataType.CLOB, this, "")
+
+    /**
+     * The column <code>crawled_page.data</code>.
+     */
+    val DATA: TableField<CrawledPageRecord, ByteArray?> = createField(DSL.name("data"), SQLDataType.BLOB, this, "")
+
     private constructor(alias: Name, aliased: Table<CrawledPageRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<CrawledPageRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
 
@@ -129,7 +139,7 @@ open class CrawledPageTable(
     override fun rename(name: Name): CrawledPageTable = CrawledPageTable(name, null)
 
     // -------------------------------------------------------------------------
-    // Row6 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
-    override fun fieldsRow(): Row6<String?, CrawledStatus?, String?, Boolean?, OffsetDateTime?, OffsetDateTime?> = super.fieldsRow() as Row6<String?, CrawledStatus?, String?, Boolean?, OffsetDateTime?, OffsetDateTime?>
+    override fun fieldsRow(): Row8<String?, CrawledStatus?, String?, Boolean?, OffsetDateTime?, OffsetDateTime?, String?, ByteArray?> = super.fieldsRow() as Row8<String?, CrawledStatus?, String?, Boolean?, OffsetDateTime?, OffsetDateTime?, String?, ByteArray?>
 }

@@ -69,7 +69,7 @@ open class SearchedPageTable(
     /**
      * The column <code>searched_page.create_at</code>.
      */
-    val CREATE_AT: TableField<SearchedPageRecord, OffsetDateTime?> = createField(DSL.name("create_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "")
+    val CREATE_AT: TableField<SearchedPageRecord, OffsetDateTime?> = createField(DSL.name("create_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<SearchedPageRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<SearchedPageRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
