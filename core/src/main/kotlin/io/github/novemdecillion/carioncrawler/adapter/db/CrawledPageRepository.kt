@@ -18,6 +18,9 @@ class CrawledPageRepository(val dsl: DSLContext) {
     if (entity.exclude == null) {
       record.reset(CRAWLED_PAGE.EXCLUDE)
     }
+    if (entity.crawledAt == null) {
+      record.crawledAt = OffsetDateTime.now()
+    }
     return dsl.insertInto(CRAWLED_PAGE).set(record)
       .onConflict(CRAWLED_PAGE.URL)
       .doUpdate()
