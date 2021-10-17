@@ -65,19 +65,6 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
   fun crawl(url: String, searchedAt: OffsetDateTime, prevUrl: String? = null, level: Int = 0) {
     val crawledPageEntity = CrawledPageEntity(url = url, searchedAt = searchedAt)
 
-    // 再起呼出オーバー
-    if (crawlProperties.maxDepth < level) {
-      transactionTemplate
-        .execute {
-          crawledRepository.selectByUrl(url)
-            ?: run {
-              crawledPageEntity.status = CrawledStatus.EXCEED_DEPTH
-              crawledRepository.insertOrUpdate(crawledPageEntity)
-            }
-        }
-      return
-    }
-
     // 別ホストへのリンク?
     val uri = URI(url)
     if ((uri.host != null)
@@ -97,6 +84,19 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
       return
     }
     visited.add(url)
+
+    // 再起呼出オーバー
+    if (crawlProperties.maxDepth < level) {
+      transactionTemplate
+        .execute {
+          crawledRepository.selectByUrl(url)
+            ?: run {
+              crawledPageEntity.status = CrawledStatus.EXCEED_DEPTH
+              crawledRepository.insertOrUpdate(crawledPageEntity)
+            }
+        }
+      return
+    }
 
     // アクセス
     try {
