@@ -4,6 +4,8 @@
 package io.github.novemdecillion.carioncrawler.adapter.jooq.tables.interfaces
 
 
+import io.github.novemdecillion.carioncrawler.adapter.db.CrawledStatus
+
 import java.io.Serializable
 import java.time.OffsetDateTime
 
@@ -14,9 +16,11 @@ import java.time.OffsetDateTime
 @Suppress("UNCHECKED_CAST")
 interface ICrawledPage : Serializable {
     var url: String?
-    var html: String?
-    var text: String?
-    var seen: OffsetDateTime?
+    var status: CrawledStatus?
+    var note: String?
+    var exclude: Boolean?
+    var searchedAt: OffsetDateTime?
+    var crawledAt: OffsetDateTime?
 
     // -------------------------------------------------------------------------
     // FROM and INTO

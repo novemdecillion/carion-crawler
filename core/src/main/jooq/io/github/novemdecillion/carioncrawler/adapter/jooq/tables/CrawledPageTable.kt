@@ -4,6 +4,7 @@
 package io.github.novemdecillion.carioncrawler.adapter.jooq.tables
 
 
+import io.github.novemdecillion.carioncrawler.adapter.db.CrawledStatus
 import io.github.novemdecillion.carioncrawler.adapter.jooq.DefaultSchema
 import io.github.novemdecillion.carioncrawler.adapter.jooq.keys.CRAWLED_PAGE_PKEY
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.records.CrawledPageRecord
@@ -16,13 +17,14 @@ import org.jooq.Field
 import org.jooq.ForeignKey
 import org.jooq.Name
 import org.jooq.Record
-import org.jooq.Row4
+import org.jooq.Row6
 import org.jooq.Schema
 import org.jooq.Table
 import org.jooq.TableField
 import org.jooq.TableOptions
 import org.jooq.UniqueKey
 import org.jooq.impl.DSL
+import org.jooq.impl.EnumConverter
 import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
@@ -67,19 +69,29 @@ open class CrawledPageTable(
     val URL: TableField<CrawledPageRecord, String?> = createField(DSL.name("url"), SQLDataType.VARCHAR(2047).nullable(false), this, "")
 
     /**
-     * The column <code>crawled_page.html</code>.
+     * The column <code>crawled_page.status</code>.
      */
-    val HTML: TableField<CrawledPageRecord, String?> = createField(DSL.name("html"), SQLDataType.CLOB, this, "")
+    val STATUS: TableField<CrawledPageRecord, CrawledStatus?> = createField(DSL.name("status"), SQLDataType.VARCHAR(255), this, "", EnumConverter<String, CrawledStatus>(String::class.java, CrawledStatus::class.java))
 
     /**
-     * The column <code>crawled_page.text</code>.
+     * The column <code>crawled_page.note</code>.
      */
-    val TEXT: TableField<CrawledPageRecord, String?> = createField(DSL.name("text"), SQLDataType.CLOB, this, "")
+    val NOTE: TableField<CrawledPageRecord, String?> = createField(DSL.name("note"), SQLDataType.CLOB, this, "")
 
     /**
-     * The column <code>crawled_page.seen</code>.
+     * The column <code>crawled_page.exclude</code>.
      */
-    val SEEN: TableField<CrawledPageRecord, OffsetDateTime?> = createField(DSL.name("seen"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "")
+    val EXCLUDE: TableField<CrawledPageRecord, Boolean?> = createField(DSL.name("exclude"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("false", SQLDataType.BOOLEAN)), this, "")
+
+    /**
+     * The column <code>crawled_page.searched_at</code>.
+     */
+    val SEARCHED_AT: TableField<CrawledPageRecord, OffsetDateTime?> = createField(DSL.name("searched_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "")
+
+    /**
+     * The column <code>crawled_page.crawled_at</code>.
+     */
+    val CRAWLED_AT: TableField<CrawledPageRecord, OffsetDateTime?> = createField(DSL.name("crawled_at"), SQLDataType.TIMESTAMPWITHTIMEZONE(6).nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<CrawledPageRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<CrawledPageRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
@@ -117,7 +129,7 @@ open class CrawledPageTable(
     override fun rename(name: Name): CrawledPageTable = CrawledPageTable(name, null)
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
-    override fun fieldsRow(): Row4<String?, String?, String?, OffsetDateTime?> = super.fieldsRow() as Row4<String?, String?, String?, OffsetDateTime?>
+    override fun fieldsRow(): Row6<String?, CrawledStatus?, String?, Boolean?, OffsetDateTime?, OffsetDateTime?> = super.fieldsRow() as Row6<String?, CrawledStatus?, String?, Boolean?, OffsetDateTime?, OffsetDateTime?>
 }

@@ -3,6 +3,7 @@ package io.github.novemdecillion.carioncrawler.adapter.db
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.records.SearchedPageRecord
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.references.SEARCHED_PAGE
 import org.jooq.DSLContext
+import org.jooq.Result
 import org.springframework.stereotype.Repository
 import java.time.OffsetDateTime
 
@@ -14,5 +15,9 @@ class SearchedPageRepository(val dsl: DSLContext) {
       .onConflict(SEARCHED_PAGE.URL)
       .doNothing()
       .execute()
+  }
+
+  fun selectAll(): Result<SearchedPageRecord> {
+    return dsl.fetch(SEARCHED_PAGE)
   }
 }

@@ -8,6 +8,5 @@ import java.time.LocalDate
 @ConstructorBinding
 data class GoogleSearchProperties (
   val startAt: LocalDate,
-  val keywords: List<String>,
   val excludeUrlStartWith: List<String>
 )

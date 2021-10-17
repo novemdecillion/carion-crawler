@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.ForcedType
 
 plugins {
@@ -21,11 +20,11 @@ jooqGenerator {
   user = "admin"
   password = "password123"
   packageName = "io.github.novemdecillion.carioncrawler.adapter.jooq"
-//  appendForcedTypes = listOf(
-//    ForcedType()
-//      .also {
-//        it.isEnumConverter = true
-//        it.includeExpression = """CLIENT\.TYPE"""
-//        it.userType = "jp.co.supportas.domain.ClientType"
-//      })
+  appendForcedTypes = listOf(
+    ForcedType()
+      .also {
+        it.isEnumConverter = true
+        it.includeExpression = """CRAWLED_PAGE\.STATUS"""
+        it.userType = "io.github.novemdecillion.carioncrawler.adapter.db.CrawledStatus"
+      })
 }

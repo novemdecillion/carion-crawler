@@ -6,6 +6,7 @@ package io.github.novemdecillion.carioncrawler.adapter.jooq.tables.references
 
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.CrawledPageTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.FlywaySchemaHistoryTable
+import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.SearchKeywordTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.SearchedPageTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.StateTable
 
@@ -20,6 +21,11 @@ val CRAWLED_PAGE = CrawledPageTable.CRAWLED_PAGE
  * The table <code>flyway_schema_history</code>.
  */
 val FLYWAY_SCHEMA_HISTORY = FlywaySchemaHistoryTable.FLYWAY_SCHEMA_HISTORY
+
+/**
+ * The table <code>search_keyword</code>.
+ */
+val SEARCH_KEYWORD = SearchKeywordTable.SEARCH_KEYWORD
 
 /**
  * The table <code>searched_page</code>.

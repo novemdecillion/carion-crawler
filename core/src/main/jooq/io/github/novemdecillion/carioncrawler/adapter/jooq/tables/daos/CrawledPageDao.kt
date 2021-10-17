@@ -4,6 +4,7 @@
 package io.github.novemdecillion.carioncrawler.adapter.jooq.tables.daos
 
 
+import io.github.novemdecillion.carioncrawler.adapter.db.CrawledStatus
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.CrawledPageTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.pojos.CrawledPageEntity
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.records.CrawledPageRecord
@@ -45,32 +46,52 @@ open class CrawledPageDao(configuration: Configuration?) : DAOImpl<CrawledPageRe
     fun fetchOneByUrlTable(value: String): CrawledPageEntity? = fetchOne(CrawledPageTable.CRAWLED_PAGE.URL, value)
 
     /**
-     * Fetch records that have <code>html BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>status BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    fun fetchRangeOfHtmlTable(lowerInclusive: String?, upperInclusive: String?): List<CrawledPageEntity> = fetchRange(CrawledPageTable.CRAWLED_PAGE.HTML, lowerInclusive, upperInclusive)
+    fun fetchRangeOfStatusTable(lowerInclusive: CrawledStatus?, upperInclusive: CrawledStatus?): List<CrawledPageEntity> = fetchRange(CrawledPageTable.CRAWLED_PAGE.STATUS, lowerInclusive, upperInclusive)
 
     /**
-     * Fetch records that have <code>html IN (values)</code>
+     * Fetch records that have <code>status IN (values)</code>
      */
-    fun fetchByHtmlTable(vararg values: String): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.HTML, *values)
+    fun fetchByStatusTable(vararg values: CrawledStatus): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.STATUS, *values)
 
     /**
-     * Fetch records that have <code>text BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>note BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    fun fetchRangeOfTextTable(lowerInclusive: String?, upperInclusive: String?): List<CrawledPageEntity> = fetchRange(CrawledPageTable.CRAWLED_PAGE.TEXT, lowerInclusive, upperInclusive)
+    fun fetchRangeOfNoteTable(lowerInclusive: String?, upperInclusive: String?): List<CrawledPageEntity> = fetchRange(CrawledPageTable.CRAWLED_PAGE.NOTE, lowerInclusive, upperInclusive)
 
     /**
-     * Fetch records that have <code>text IN (values)</code>
+     * Fetch records that have <code>note IN (values)</code>
      */
-    fun fetchByTextTable(vararg values: String): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.TEXT, *values)
+    fun fetchByNoteTable(vararg values: String): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.NOTE, *values)
 
     /**
-     * Fetch records that have <code>seen BETWEEN lowerInclusive AND upperInclusive</code>
+     * Fetch records that have <code>exclude BETWEEN lowerInclusive AND upperInclusive</code>
      */
-    fun fetchRangeOfSeenTable(lowerInclusive: OffsetDateTime?, upperInclusive: OffsetDateTime?): List<CrawledPageEntity> = fetchRange(CrawledPageTable.CRAWLED_PAGE.SEEN, lowerInclusive, upperInclusive)
+    fun fetchRangeOfExcludeTable(lowerInclusive: Boolean?, upperInclusive: Boolean?): List<CrawledPageEntity> = fetchRange(CrawledPageTable.CRAWLED_PAGE.EXCLUDE, lowerInclusive, upperInclusive)
 
     /**
-     * Fetch records that have <code>seen IN (values)</code>
+     * Fetch records that have <code>exclude IN (values)</code>
      */
-    fun fetchBySeenTable(vararg values: OffsetDateTime): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.SEEN, *values)
+    fun fetchByExcludeTable(vararg values: Boolean): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.EXCLUDE, *values.toTypedArray())
+
+    /**
+     * Fetch records that have <code>searched_at BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    fun fetchRangeOfSearchedAtTable(lowerInclusive: OffsetDateTime?, upperInclusive: OffsetDateTime?): List<CrawledPageEntity> = fetchRange(CrawledPageTable.CRAWLED_PAGE.SEARCHED_AT, lowerInclusive, upperInclusive)
+
+    /**
+     * Fetch records that have <code>searched_at IN (values)</code>
+     */
+    fun fetchBySearchedAtTable(vararg values: OffsetDateTime): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.SEARCHED_AT, *values)
+
+    /**
+     * Fetch records that have <code>crawled_at BETWEEN lowerInclusive AND upperInclusive</code>
+     */
+    fun fetchRangeOfCrawledAtTable(lowerInclusive: OffsetDateTime?, upperInclusive: OffsetDateTime?): List<CrawledPageEntity> = fetchRange(CrawledPageTable.CRAWLED_PAGE.CRAWLED_AT, lowerInclusive, upperInclusive)
+
+    /**
+     * Fetch records that have <code>crawled_at IN (values)</code>
+     */
+    fun fetchByCrawledAtTable(vararg values: OffsetDateTime): List<CrawledPageEntity> = fetch(CrawledPageTable.CRAWLED_PAGE.CRAWLED_AT, *values)
 }

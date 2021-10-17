@@ -3,14 +3,16 @@ package io.github.novemdecillion.carioncrawler.adapter.search
 import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Configuration
 import com.codeborne.selenide.Selenide
+import io.github.novemdecillion.carioncrawler.adapter.db.SearchKeywordRepository
 import io.github.novemdecillion.carioncrawler.adapter.db.SearchedPageRepository
-import io.github.novemdecillion.carioncrawler.adapter.db.StateRepository
 import org.openqa.selenium.NoSuchElementException
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.transaction.support.TransactionTemplate
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.time.LocalDate
@@ -20,9 +22,9 @@ import kotlin.random.Random
 
 @Service
 class GoogleSearchService(val searchProperties: GoogleSearchProperties, val searchedRepository: SearchedPageRepository,
-                          val stateRepository: StateRepository) {
+                          val keywordRepository: SearchKeywordRepository, val transactionTemplate: TransactionTemplate) {
   companion object {
-    val log = LoggerFactory.getLogger(GoogleSearchService::class.java)
+    val log: Logger = LoggerFactory.getLogger(GoogleSearchService::class.java)
     val DATE_PATTERN: DateTimeFormatter = DateTimeFormatter.ofPattern("M/d/yyyy")
   }
 
@@ -34,21 +36,26 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
       Configuration.startMaximized = true
       Configuration.timeout = 10_000
 
-      val searchStartDate = stateRepository
-        .getSearchedDate(searchProperties.startAt.minusDays(1))
-        .plusDays(1)
-
-      // 開始日が今なら、もう検索済み
-      if (searchStartDate == LocalDate.now()) {
-        return
-      }
-
-      searchProperties.keywords
-        .forEach {
-          search(it, searchStartDate)
+      transactionTemplate
+        .execute {
+          keywordRepository.selectAll()
         }
+        ?.forEach { keywordEntity ->
 
-      stateRepository.setSearchedDate(LocalDate.now().minusDays(1))
+          val searchStartDate = (keywordEntity.searchedAt ?: searchProperties.startAt.minusDays(1))
+            .plusDays(1)
+
+          // 開始日が今なら、もう検索済み
+          if (searchStartDate == LocalDate.now()) {
+            return
+          }
+          search(keywordEntity.keyword!!, searchStartDate)
+
+          transactionTemplate
+            .execute {
+              keywordRepository.updateSearchAt(keywordEntity.keyword!!, LocalDate.now().minusDays(1))
+            }
+        }
     } catch (ex: Exception) {
       log.error("検索エラー", ex)
     }
@@ -102,8 +109,11 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
       .filter { link ->
         null == searchProperties.excludeUrlStartWith.find { link.startsWith(it) }
       }
-      .forEach {
-        searchedRepository.insert(it)
+      .forEach { link ->
+        transactionTemplate
+          .execute {
+            searchedRepository.insert(link)
+          }
       }
     return true
   }

@@ -6,6 +6,7 @@ package io.github.novemdecillion.carioncrawler.adapter.jooq
 
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.CrawledPageTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.FlywaySchemaHistoryTable
+import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.SearchKeywordTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.SearchedPageTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.StateTable
 
@@ -40,6 +41,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
     val FLYWAY_SCHEMA_HISTORY get() = FlywaySchemaHistoryTable.FLYWAY_SCHEMA_HISTORY
 
     /**
+     * The table <code>search_keyword</code>.
+     */
+    val SEARCH_KEYWORD get() = SearchKeywordTable.SEARCH_KEYWORD
+
+    /**
      * The table <code>searched_page</code>.
      */
     val SEARCHED_PAGE get() = SearchedPageTable.SEARCHED_PAGE
@@ -54,6 +60,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
     override fun getTables(): List<Table<*>> = listOf(
         CrawledPageTable.CRAWLED_PAGE,
         FlywaySchemaHistoryTable.FLYWAY_SCHEMA_HISTORY,
+        SearchKeywordTable.SEARCH_KEYWORD,
         SearchedPageTable.SEARCHED_PAGE,
         StateTable.STATE
     )
