@@ -38,6 +38,8 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
   fun crawl() {
     Configuration.headless = true
     Configuration.startMaximized = true
+    Configuration.downloadsFolder = crawlProperties.storeFolder
+    Configuration.reportsFolder = crawlProperties.storeFolder
 
     transactionTemplate
       .execute {
@@ -49,8 +51,6 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
       }
       ?.forEach {
         try {
-          val folder = URLEncoder.encode(it.url!!, StandardCharsets.UTF_8)
-          Configuration.downloadsFolder = "${crawlProperties.storeFolder}/$folder"
 
           visited.clear()
           crawl(it.url!!, it.createAt!!)
