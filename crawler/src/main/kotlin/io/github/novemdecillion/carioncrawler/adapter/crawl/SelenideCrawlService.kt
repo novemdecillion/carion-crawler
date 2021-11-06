@@ -17,8 +17,6 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
 import java.net.URI
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import java.time.OffsetDateTime
 
 @Service
@@ -40,6 +38,7 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
     Configuration.startMaximized = true
     Configuration.downloadsFolder = crawlProperties.storeFolder
     Configuration.reportsFolder = crawlProperties.storeFolder
+    System.setProperty("chromeoptions.args", "--no-zygote")
 
     transactionTemplate
       .execute {
