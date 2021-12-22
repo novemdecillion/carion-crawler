@@ -4,10 +4,10 @@ plugins {
   idea
   java
 
-  id("org.springframework.boot") version "2.5.5" apply false
+  id("org.springframework.boot") version "2.6.1" apply false
   id("io.spring.dependency-management") version "1.0.11.RELEASE" apply false
-  kotlin("jvm") version "1.5.31" apply false
-  kotlin("plugin.spring") version "1.5.31" apply false
+  kotlin("jvm") version "1.6.0" apply false
+  kotlin("plugin.spring") version "1.6.0" apply false
 }
 
 subprojects {
@@ -17,7 +17,7 @@ subprojects {
     plugin("org.jetbrains.kotlin.plugin.spring")
   }
 
-  group = "io.github.novemdecillion"
+  group = "io.github.novemdecillion.carioncrawler"
   version = "0.0.1-SNAPSHOT"
   java.sourceCompatibility = JavaVersion.VERSION_11
 

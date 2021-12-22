@@ -1,0 +1,68 @@
+scalar Date
+scalar DateTime
+
+enum Role {
+  ADMIN
+}
+
+enum CrawledStatus {
+  SUCCESS
+  ERROR
+  DOWNLOAD
+  NO_KEYWORD
+  DIFFERENT_HOST
+  EXCEED_DEPTH
+}
+
+type Account {
+  username: ID!
+  role: Role!
+}
+
+type SearchedPage {
+  url: String!
+  createAt: DateTime!
+}
+
+type SearchKeyword {
+  keyword: String!
+  searchedAt: Date
+}
+
+type CrawledPage {
+  url: String!
+  status: CrawledStatus!
+  note: String
+  exclude: Boolean!
+  searchedAt: DateTime!
+  crawledAt: DateTime!
+  html: String
+  existData: Boolean!
+}
+
+type Query {
+  ping: Boolean
+
+  myAccount: Account
+
+  searchedPageCount: Int!
+  searchedPages(limit: Int, offset: Int): [SearchedPage!]
+
+  searchKeywordCount: Int!
+  searchKeywords(limit: Int, offset: Int): [SearchKeyword!]
+
+  crawledPageCount(status: [CrawledStatus!], enableUrlFilter: Boolean): Int!
+  crawledPages(status: [CrawledStatus], enableUrlFilter: Boolean, limit: Int, offset: Int): [CrawledPage!]
+
+  getCrawledPageUrlFilters: [String!]
+}
+
+type Mutation {
+  login(username: String!, password: String): Account
+  logout: Boolean
+
+  addSearchKeyword(keyword: String!): Boolean
+  deleteSearchKeyword(keyword: String!): Boolean
+
+  setCrawledPageUrlFilters(urlFilters: [String!]): Boolean
+}

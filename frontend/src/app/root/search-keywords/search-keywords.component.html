@@ -1,0 +1,56 @@
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col">
+      <div class="alert alert-info">Googleで検索を行うキーワード</div>
+    </div>
+  </div>
+
+  <div class="row justify-content-end">
+    <div class="col-auto">
+      <button class="btn btn-outline-primary" (click)="onAdd(addModal)">追加</button>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>キーワード</th>
+        <th>最終検索日</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of dataSource$ | ngrxPush">
+        <td>{{ data.keyword }}</td>
+        <td>
+          {{ data.searchedAt }}
+        </td>
+        <td>
+          <button class="btn btn-outline-primary" (click)="onDelete(data)">削除</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #addModal let-modal>
+  <form [formGroup]="keywordFormGroup" (ngSubmit)="modal.close()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">キーワード追加</h5>
+      </div>
+      <div class="modal-body">
+
+        <div class="mb-3">
+          <label for="keyword" class="form-label">キーワード</label>
+            <input class="form-control" type="text" id="keyword" formControlName="keyword">
+        </div>
+
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="submit" class="btn btn-primary" [disabled]="keywordFormGroup.invalid">OK</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss()">キャンセル</button>
+      </div>
+    </div>
+  </form>
+</ng-template>

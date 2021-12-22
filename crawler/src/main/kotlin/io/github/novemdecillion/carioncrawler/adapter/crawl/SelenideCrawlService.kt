@@ -38,7 +38,6 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
     Configuration.startMaximized = true
     Configuration.downloadsFolder = crawlProperties.storeFolder
     Configuration.reportsFolder = crawlProperties.storeFolder
-    System.setProperty("chromeoptions.args", "--no-zygote")
 
     transactionTemplate
       .execute {

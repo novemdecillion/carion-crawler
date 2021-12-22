@@ -1,0 +1,27 @@
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col">
+      <div class="alert alert-info">Googleでキーワード検索にヒットしたページ</div>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>検索日時</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of dataSource$ | ngrxPush">
+        <td class="text-break">
+          <a href="{{ data.url }}">{{ data.url }}</a>
+        </td>
+        <td class="text-nowrap">
+          {{ data.createAt }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ngb-pagination [collectionSize]="total" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChange()"></ngb-pagination>
+</div>

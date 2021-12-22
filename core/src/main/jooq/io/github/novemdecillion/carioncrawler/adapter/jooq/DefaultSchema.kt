@@ -4,6 +4,7 @@
 package io.github.novemdecillion.carioncrawler.adapter.jooq
 
 
+import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.AccountTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.CrawledPageTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.FlywaySchemaHistoryTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.SearchKeywordTable
@@ -29,6 +30,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
          */
         val DEFAULT_SCHEMA = DefaultSchema()
     }
+
+    /**
+     * The table <code>account</code>.
+     */
+    val ACCOUNT get() = AccountTable.ACCOUNT
 
     /**
      * The table <code>crawled_page</code>.
@@ -58,6 +64,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
     override fun getCatalog(): Catalog = DefaultCatalog.DEFAULT_CATALOG
 
     override fun getTables(): List<Table<*>> = listOf(
+        AccountTable.ACCOUNT,
         CrawledPageTable.CRAWLED_PAGE,
         FlywaySchemaHistoryTable.FLYWAY_SCHEMA_HISTORY,
         SearchKeywordTable.SEARCH_KEYWORD,

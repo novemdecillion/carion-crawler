@@ -1,0 +1,81 @@
+fragment Account on Account {
+  username
+  role
+}
+
+fragment SearchedPage on SearchedPage {
+  url
+  createAt
+}
+
+fragment SearchKeyword on SearchKeyword {
+  keyword
+  searchedAt
+}
+
+fragment CrawledPage on CrawledPage {
+  url
+  status
+  note
+  exclude
+  searchedAt
+  crawledAt
+  html
+  existData
+}
+
+query Ping {
+  ping
+}
+
+query MyAccount {
+  myAccount {
+    ... Account
+  }
+}
+
+query searchedPages($skipCount: Boolean = true, $limit: Int, $offset: Int) {
+  searchedPageCount @skip(if: $skipCount)
+  searchedPages(limit: $limit, offset: $offset) {
+    ...SearchedPage
+  }
+}
+
+query searchKeywords($skipCount: Boolean = true, $limit: Int, $offset: Int) {
+  searchKeywordCount @skip(if: $skipCount)
+  searchKeywords(limit: $limit, offset: $offset) {
+    ...SearchKeyword
+  }
+}
+
+query crawledPages($skipCount: Boolean = true, $status: [CrawledStatus!] = [SUCCESS, NO_KEYWORD], $enableUrlFilter: Boolean, $limit: Int, $offset: Int) {
+  crawledPageCount(status: $status, enableUrlFilter: $enableUrlFilter) @skip(if: $skipCount)
+  crawledPages(status: $status, enableUrlFilter: $enableUrlFilter, limit: $limit, offset: $offset) {
+    ...CrawledPage
+  }
+}
+
+query getCrawledPageUrlFilters {
+  getCrawledPageUrlFilters
+}
+
+mutation Login($username: String!, $password: String!) {
+  login(username: $username, password: $password) {
+    ...Account
+  }
+}
+
+mutation Logout {
+  logout
+}
+
+mutation addSearchKeyword($keyword: String!) {
+  addSearchKeyword(keyword: $keyword)
+}
+mutation deleteSearchKeyword($keyword: String!) {
+  deleteSearchKeyword(keyword: $keyword)
+}
+
+mutation setCrawledPageUrlFilters($urlFilters: [String!]) {
+  setCrawledPageUrlFilters(urlFilters: $urlFilters)
+}

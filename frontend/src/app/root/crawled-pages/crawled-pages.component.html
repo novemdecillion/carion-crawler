@@ -1,0 +1,78 @@
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col">
+      <div class="alert alert-info">検索されたページからリンクを辿ったページ(同一ホスト内で最大10階層まで)</div>
+    </div>
+  </div>
+  <div class="row justify-content-end">
+    <div class="col-auto">
+      <button class="btn btn-outline-primary" (click)="onUrlFilter(urlFiltersModal)">URLフィルター...</button>
+    </div>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <!-- <th>状態</th> -->
+        <!-- <th>対象外</th> -->
+        <!-- <th>検索日時</th> -->
+        <th>巡回日時</th>
+        <th>スナップショット</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of dataSource$ | ngrxPush">
+        <td class="text-break">
+          <a href="{{ data.url }}">{{ data.url }}</a>
+        </td>
+        <!-- <td class="text-nowrap">
+          {{ data.status }}
+        </td> -->
+        <!--
+        <td class="text-nowrap">
+          {{ data.exclude }}
+        </td> -->
+        <!-- <td class="text-nowrap">
+          {{ data.searchedAt }}
+        </td> -->
+        <td class="text-nowrap">
+          {{ data.crawledAt }}
+        </td>
+        <td>
+          <img src="/public/crawled?url={{data.encodedUrl}}" *ngIf="data.existData">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ngb-pagination [collectionSize]="total" [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [boundaryLinks]="true" (pageChange)="onPageChange()"></ngb-pagination>
+</div>
+
+<ng-template #urlFiltersModal let-modal>
+  <form [formGroup]="urlFiltersFormGroup" (ngSubmit)="modal.close()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">URLフィルター設定</h5>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+          改行区切りでフィルターするURLを入力。<br>
+          先頭に!を指定すると除外。<br>
+          %で曖昧検索。
+        </div>
+
+        <div class="mb-3">
+          <label for="urlFilters" class="form-label">URLフィルター</label>
+          <textarea class="form-control" type="text" rows="20" id="urlFilters" formControlName="urlFilters">
+
+          </textarea>
+        </div>
+
+      </div>
+      <div class="modal-footer justify-content-between">
+        <button type="submit" class="btn btn-primary" [disabled]="urlFiltersFormGroup.invalid">OK</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss()">キャンセル</button>
+      </div>
+    </div>
+  </form>
+</ng-template>

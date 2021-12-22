@@ -4,11 +4,13 @@
 package io.github.novemdecillion.carioncrawler.adapter.jooq.keys
 
 
+import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.AccountTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.CrawledPageTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.FlywaySchemaHistoryTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.SearchKeywordTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.SearchedPageTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.StateTable
+import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.records.AccountRecord
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.records.CrawledPageRecord
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.records.FlywaySchemaHistoryRecord
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.records.SearchKeywordRecord
@@ -25,6 +27,7 @@ import org.jooq.impl.Internal
 // UNIQUE and PRIMARY KEY definitions
 // -------------------------------------------------------------------------
 
+val ACCOUNT_PKEY: UniqueKey<AccountRecord> = Internal.createUniqueKey(AccountTable.ACCOUNT, DSL.name("account_pkey"), arrayOf(AccountTable.ACCOUNT.USERNAME), true)
 val CRAWLED_PAGE_PKEY: UniqueKey<CrawledPageRecord> = Internal.createUniqueKey(CrawledPageTable.CRAWLED_PAGE, DSL.name("crawled_page_pkey"), arrayOf(CrawledPageTable.CRAWLED_PAGE.URL), true)
 val FLYWAY_SCHEMA_HISTORY_PK: UniqueKey<FlywaySchemaHistoryRecord> = Internal.createUniqueKey(FlywaySchemaHistoryTable.FLYWAY_SCHEMA_HISTORY, DSL.name("flyway_schema_history_pk"), arrayOf(FlywaySchemaHistoryTable.FLYWAY_SCHEMA_HISTORY.INSTALLED_RANK), true)
 val SEARCH_KEYWORD_PKEY: UniqueKey<SearchKeywordRecord> = Internal.createUniqueKey(SearchKeywordTable.SEARCH_KEYWORD, DSL.name("search_keyword_pkey"), arrayOf(SearchKeywordTable.SEARCH_KEYWORD.KEYWORD), true)

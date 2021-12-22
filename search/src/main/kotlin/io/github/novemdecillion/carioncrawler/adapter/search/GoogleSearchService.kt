@@ -35,8 +35,7 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
       Configuration.headless = true
       Configuration.startMaximized = true
       Configuration.timeout = 10_000
-      System.setProperty("chromeoptions.args", "--no-zygote")
-      
+
       transactionTemplate
         .execute {
           keywordRepository.selectAll()

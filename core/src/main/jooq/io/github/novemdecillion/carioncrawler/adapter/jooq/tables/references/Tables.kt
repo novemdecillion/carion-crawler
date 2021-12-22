@@ -4,6 +4,7 @@
 package io.github.novemdecillion.carioncrawler.adapter.jooq.tables.references
 
 
+import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.AccountTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.CrawledPageTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.FlywaySchemaHistoryTable
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.SearchKeywordTable
@@ -11,6 +12,11 @@ import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.SearchedPageTa
 import io.github.novemdecillion.carioncrawler.adapter.jooq.tables.StateTable
 
 
+
+/**
+ * The table <code>account</code>.
+ */
+val ACCOUNT = AccountTable.ACCOUNT
 
 /**
  * The table <code>crawled_page</code>.

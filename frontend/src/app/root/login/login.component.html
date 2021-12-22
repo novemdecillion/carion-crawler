@@ -1,0 +1,22 @@
+<form class="d-flex flex-row justify-content-center mt-5" [formGroup]="formGroup" (ngSubmit)="onLogin()">
+  <fieldset class="border border-primary p-3" style="width: 460px;">
+
+    <div class="alert alert-danger" *ngIf="error$ | ngrxPush">
+      {{ error$ | ngrxPush }}
+    </div>
+
+    <div class="mb-3">
+      <label for="usernameInput" class="form-label">アカウント</label>
+      <input type="text" class="form-control" id="usernameInput" formControlName="username">
+    </div>
+
+    <div class="mb-3">
+      <label for="passwordInput" class="form-label">パスワード</label>
+      <input type="password" class="form-control" id="passwordInput" formControlName="password">
+    </div>
+
+    <div>
+      <button type="submit" class="btn btn-primary w-100" [disabled]="formGroup.invalid">ログイン</button>
+    </div>
+  </fieldset>
+</form>

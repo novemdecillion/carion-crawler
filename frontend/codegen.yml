@@ -1,0 +1,9 @@
+overwrite: true
+schema: "../backend/src/main/resources/graphql/*.graphql"
+documents: "src/graphql/*.graphql"
+generates:
+  src/graphql/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-apollo-angular"
