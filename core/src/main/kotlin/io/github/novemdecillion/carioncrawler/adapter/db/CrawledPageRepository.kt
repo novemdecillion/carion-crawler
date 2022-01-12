@@ -40,7 +40,7 @@ class CrawledPageRepository(val dsl: DSLContext) {
     return dsl.select(SEARCHED_PAGE.asterisk())
       .from(SEARCHED_PAGE)
       .leftJoin(CRAWLED_PAGE).on(SEARCHED_PAGE.URL.equal(CRAWLED_PAGE.URL))
-      .where(CRAWLED_PAGE.URL.isNull.or(SEARCHED_PAGE.CREATE_AT.notEqual(CRAWLED_PAGE.CRAWLED_AT)))
+      .where(CRAWLED_PAGE.URL.isNull.or(SEARCHED_PAGE.CREATE_AT.notEqual(CRAWLED_PAGE.SEARCHED_AT)))
       .fetchInto(SearchedPageEntity::class.java)
   }
 
