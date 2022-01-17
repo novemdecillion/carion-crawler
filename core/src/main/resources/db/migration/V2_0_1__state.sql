@@ -1,0 +1,1 @@
+alter table state alter column value type text;

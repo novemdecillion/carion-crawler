@@ -67,7 +67,7 @@ open class StateTable(
     /**
      * The column <code>state.value</code>.
      */
-    val VALUE: TableField<StateRecord, String?> = createField(DSL.name("value"), SQLDataType.VARCHAR(255), this, "")
+    val VALUE: TableField<StateRecord, String?> = createField(DSL.name("value"), SQLDataType.CLOB, this, "")
 
     private constructor(alias: Name, aliased: Table<StateRecord>?): this(alias, null, null, aliased, null)
     private constructor(alias: Name, aliased: Table<StateRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, aliased, parameters)
