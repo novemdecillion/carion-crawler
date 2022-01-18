@@ -18,9 +18,9 @@ fragment CrawledPage on CrawledPage {
   status
   note
   exclude
-  searchedAt
+#  searchedAt
   crawledAt
-  html
+#  html
   existData
 }
 

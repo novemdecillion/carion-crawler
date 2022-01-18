@@ -135,7 +135,7 @@ export type SearchedPageFragment = { __typename?: 'SearchedPage', url: string, c
 
 export type SearchKeywordFragment = { __typename?: 'SearchKeyword', keyword: string, searchedAt?: any | null | undefined };
 
-export type CrawledPageFragment = { __typename?: 'CrawledPage', url: string, status: CrawledStatus, note?: string | null | undefined, exclude: boolean, searchedAt: any, crawledAt: any, html?: string | null | undefined, existData: boolean };
+export type CrawledPageFragment = { __typename?: 'CrawledPage', url: string, status: CrawledStatus, note?: string | null | undefined, exclude: boolean, crawledAt: any, existData: boolean };
 
 export type PingQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -174,7 +174,7 @@ export type CrawledPagesQueryVariables = Exact<{
 }>;
 
 
-export type CrawledPagesQuery = { __typename?: 'Query', crawledPageCount?: number, crawledPages?: Array<{ __typename?: 'CrawledPage', url: string, status: CrawledStatus, note?: string | null | undefined, exclude: boolean, searchedAt: any, crawledAt: any, html?: string | null | undefined, existData: boolean }> | null | undefined };
+export type CrawledPagesQuery = { __typename?: 'Query', crawledPageCount?: number, crawledPages?: Array<{ __typename?: 'CrawledPage', url: string, status: CrawledStatus, note?: string | null | undefined, exclude: boolean, crawledAt: any, existData: boolean }> | null | undefined };
 
 export type GetCrawledPageUrlFiltersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -239,9 +239,7 @@ export const CrawledPageFragmentDoc = gql`
   status
   note
   exclude
-  searchedAt
   crawledAt
-  html
   existData
 }
     `;
