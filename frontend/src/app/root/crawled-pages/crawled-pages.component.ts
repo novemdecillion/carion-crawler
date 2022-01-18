@@ -43,7 +43,7 @@ export class CrawledPagesComponent {
         map(res => {
           this.total = res.data.crawledPageCount ?? 0;
           return res.data.crawledPages?.map(page => {
-            page.searchedAt = formatGraphQLDateTime(page.searchedAt);
+            // page.searchedAt = formatGraphQLDateTime(page.searchedAt);
             page.crawledAt = formatGraphQLDateTime(page.crawledAt);
             return Object.assign({ encodedUrl: encodeURIComponent(page.url) }, page);
           }) ?? []
