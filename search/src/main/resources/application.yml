@@ -1,0 +1,22 @@
+app:
+  google-search:
+    cron: 0 10 0 * * *
+    start-at: "2021-08-15"
+    exclude-url-start-with:
+      - https://www.google.com/search?
+      - https://translate.google.com/translate?
+      - http://webcache.googleusercontent.com/search?
+      - https://webcache.googleusercontent.com/search?
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost/carion-crawler
+    username: admin
+    password: password123
+    hikari:
+      maximum-pool-size: 1
+      minimum-idle: 5
+
+  flyway:
+    clean-on-validation-error: true

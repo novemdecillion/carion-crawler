@@ -1,0 +1,36 @@
+app:
+  jwt:
+    secret: "*zZW9-Lktrhv{=6Wm%Zbm37*i=z$mivc"
+    expiration: PT30M
+    refresh: PT5M
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost/carion-crawler
+    username: admin
+    password: password123
+    hikari:
+      maximum-pool-size: 1
+      minimum-idle: 5
+
+  flyway:
+    clean-on-validation-error: true
+
+graphql:
+  servlet:
+    mapping: /api
+    context-setting: PER_REQUEST_WITH_INSTRUMENTATION
+    exception-handlers-enabled: true
+    async-timeout: 300000
+    websocket:
+      enabled: false
+  tools:
+    schema-location-pattern: graphql/*.schema.graphql
+
+logging:
+  level:
+    org:
+      jooq:
+        tools:
+          LoggerListener: debug
