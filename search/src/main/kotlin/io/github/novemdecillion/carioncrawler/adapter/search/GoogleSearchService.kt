@@ -86,7 +86,7 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
 
   fun enumerateLink(): Boolean {
     try {
-      Selenide.`$`("#search").should(Condition.appear)
+      Selenide.`$`("#search").scrollIntoView(true).should(Condition.appear)
     } catch (ex: NoSuchElementException) {
       if (Selenide.`$`("#captcha-form").`is`(Condition.exist)) {
         /*
@@ -99,6 +99,9 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
       } else {
         log.error("検索結果の取得に失敗。", ex)
       }
+      return false
+    } catch (ex: Throwable) {
+      log.error("検索結果の取得に失敗。", ex)
       return false
     }
 
