@@ -28,9 +28,6 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
     val log: Logger = LoggerFactory.getLogger(SelenideCrawlService::class.java)
   }
 
-  val visited = mutableSetOf<String>()
-  val keywords = mutableSetOf<String>()
-
   @Scheduled(cron = "\${app.selenide-crawl.cron}")
   @EventListener(ApplicationReadyEvent::class)
   fun crawl() {
@@ -39,9 +36,11 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
     Configuration.downloadsFolder = crawlProperties.storeFolder
     Configuration.reportsFolder = crawlProperties.storeFolder
 
+    val visited = mutableSetOf<String>()
+    val keywords = mutableSetOf<String>()
+
     transactionTemplate
       .execute {
-        keywords.clear()
         keywords.addAll(
           keywordRepository.selectAll()
             .flatMap { it.keyword!!.split(StringUtils.SPACE) })
@@ -51,7 +50,7 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
         try {
 
           visited.clear()
-          crawl(it.url!!, it.createAt!!)
+          crawl(it.url!!, it.createAt!!, visited, keywords)
         } catch (ex: Exception) {
           log.error("${it.url}への巡回でエラーが発生しました。", ex)
         } finally {
@@ -60,7 +59,7 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
       }
   }
 
-  fun crawl(url: String, searchedAt: OffsetDateTime, prevUrl: String? = null, level: Int = 0) {
+  fun crawl(url: String, searchedAt: OffsetDateTime, visited: MutableSet<String>, keywords: MutableSet<String>, prevUrl: String? = null, level: Int = 0) {
     val crawledPageEntity = CrawledPageEntity(url = url, searchedAt = searchedAt)
 
     // 別ホストへのリンク?
@@ -162,7 +161,7 @@ class SelenideCrawlService(val crawlProperties: SelenideCrawlProperties,
         }
       }
       .forEach {
-        crawl(it.toString(), searchedAt, url,level + 1)
+        crawl(it.toString(), searchedAt, visited, keywords, url,level + 1)
       }
   }
 }
