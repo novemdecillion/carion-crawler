@@ -7,6 +7,6 @@ import java.time.LocalDate
 @ConfigurationProperties(prefix = "app.google-search")
 @ConstructorBinding
 data class GoogleSearchProperties (
-  val startAt: LocalDate,
+  val startAt: LocalDate? = null,
   val excludeUrlStartWith: List<String>
 )

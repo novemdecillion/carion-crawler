@@ -42,14 +42,16 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
         }
         ?.forEach { keywordEntity ->
 
-          val searchStartDate = (keywordEntity.searchedAt ?: searchProperties.startAt.minusDays(1))
-            .plusDays(1)
+          val searchStartDate = (keywordEntity.searchedAt ?: searchProperties.startAt?.minusDays(1))
+            ?.plusDays(1)
 
           // 開始日が今なら、もう検索済み
           if (searchStartDate == LocalDate.now()) {
             return
           }
-          search(keywordEntity.keyword!!, searchStartDate)
+
+
+          search(keywordEntity.keyword!!, if (searchProperties.startAt != null) searchStartDate else null)
 
           transactionTemplate
             .execute {
@@ -61,11 +63,11 @@ class GoogleSearchService(val searchProperties: GoogleSearchProperties, val sear
     }
   }
 
-  fun search(keyword: String, searchStartDate: LocalDate) {
+  fun search(keyword: String, searchStartDate: LocalDate?) {
     val encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8)
-    val encodedPeriod = URLEncoder.encode("cdr:1,cd_min:${searchStartDate.format(DATE_PATTERN)},cd_max:", StandardCharsets.UTF_8)
+    val encodedPeriod = searchStartDate?.let { "&tbs=" + URLEncoder.encode("cdr:1,cd_min:${it.format(DATE_PATTERN)},cd_max:", StandardCharsets.UTF_8)}.orEmpty()
 
-    Selenide.open("https://www.google.com/search?q=${encodedKeyword}&tbs=${encodedPeriod}&;filter=0")
+    Selenide.open("https://www.google.com/search?q=${encodedKeyword}${encodedPeriod}&filter=0")
     while (true) {
       if (!enumerateLink()) {
         break
