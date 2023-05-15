@@ -8,12 +8,7 @@ import org.springframework.boot.runApplication
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-class CrawlApplication(val crawlService: SelenideCrawlService) : CommandLineRunner {
-  override fun run(vararg args: String?) {
-//    searchService.search()
-    crawlService.crawl()
-  }
-}
+class CrawlApplication(val crawlService: SelenideCrawlService)
 
 fun main(args: Array<String>) {
   runApplication<CrawlApplication>(*args)
